@@ -80,7 +80,7 @@ Weaviate Logs
 
 # Usage
 ```
-1. Up Docker Container
+1. Do `make run`
 2. Open Gradio in a browser
 3. If there is no changes, you can access by open [Here](http://localhost:7860/)
 4. You can do indexing or upsert the document first.
