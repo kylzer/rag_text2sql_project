@@ -155,12 +155,11 @@ def indexing_ui(orchestrator):
         outputs=[new_collection_input]
     )
 
-    # index_btn.click(
-    #     fn=orchestrator.process_pdf,
-    #     inputs=[file_input],
-    #     outputs=[index_output, index_preview]
-    # ).
     index_btn.click(
+        fn=orchestrator.process_pdf,
+        inputs=[file_input],
+        outputs=[index_output, index_preview]
+    ).then(
         fn=orchestrator.chunking_text,
         inputs=[file_input], 
         outputs=[index_output, chunked_text]

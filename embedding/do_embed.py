@@ -33,7 +33,7 @@ def embed_texts(texts: List[str], model_name: str) -> List[List[float]]:
         return []
     logger.info("Do Encode!")
     with torch.no_grad():
-        embeddings = model.encode(texts, batch_size=16, convert_to_numpy=True, normalize_embeddings=True)
+        embeddings = model.encode(texts, batch_size=16, convert_to_numpy=True, normalize_embeddings=False)
     if embeddings.shape[0] == 0:
         logger.warning("Model returned 0 vectors!")
 

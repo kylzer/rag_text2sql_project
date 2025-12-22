@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 from typing import List, Union
 
-from embedding import embed_texts
+from do_embed import embed_texts
 
 app = FastAPI()
 
