@@ -7,6 +7,8 @@ An Fraud Knowledge Agent
 # Requirements
 - Docker
 - Docker Compose
+- Python 3.10
+
 **NOTES** : .env is not ignored for test purpose
 # Specification
 For this challenge, I use Macbook Pro M1 with 8GB RAM and 512GB Storage.
@@ -14,22 +16,38 @@ For this challenge, I use Macbook Pro M1 with 8GB RAM and 512GB Storage.
 That's the reason I don't use GPU on Docker Compose for Ollama.
 
 # Model
-- nomic-embed-text-v1.5 for Embedding
-- GPT-OSS 20B for Generative
-
+- nomic-embed-text-v1.5 for Embedding (use sentence-transformers/all-MiniLM-L6-v2 for Low-end PC)
+- GPT-OSS 20B for Generative (with Ollama)
 
 # Tool List
 - fraud_knowledge
 
 
 # Library & Frameworks
+## For Main Program
 ```
-fastapi==0.115.9
-langchain==0.3.25
-langchain-openai==0.3.18
+chonkie==1.5.0
+docling==2.65.0
+gradio==6.1.0
+langchain==1.2.0
+langchain-core==1.2.4
+langchain-google-genai==4.1.2
+langchain-openai==1.1.6
+mlx-vlm==0.3.9
 python-dotenv==1.1.0
-rich==14.0.0
-uvicorn==0.34.2
+rich==14.2.0
+weaviate==0.1.2
+weaviate-client==4.19.0
+```
+## For Embedding
+```
+einops==0.8.1
+fastapi==0.115.0
+uvicorn==0.34.0
+sentence-transformers>=3.0.0
+pydantic==2.10.0
+numpy>=1.26.0
+torch>=2.2.0
 ```
 
 # Installation
@@ -45,17 +63,12 @@ Go to the project directory
   cd mekari_test
 ```
 
-Up Docker Container
-
+Run with Makefile
 ```bash
-  docker-compose -f docker-compose.yml up -d --build
+  make run
 ```
 
 Logging Container  
-Gradio
-```
-docker logs -f mekari_test-gradio
-```
 Embedding Service Logs
 ```
   docker logs -f embedding_service
