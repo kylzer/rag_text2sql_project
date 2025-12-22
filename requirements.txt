@@ -6,6 +6,7 @@ langchain-core==1.2.4
 langchain-google-genai==4.1.2
 langchain-openai==1.1.6
 mlx-vlm==0.3.9
+python-dotenv==1.1.0
 rich==14.2.0
 weaviate==0.1.2
 weaviate-client==4.19.0
