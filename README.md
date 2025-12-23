@@ -89,6 +89,44 @@ Weaviate Logs
 ```
 
 # Photo
-TBD
+
+## Indexing
+### Main
+![Indexing Main](assets/photos/Indexing%20Main.png)
+
+### Input
+![Indexing Input](assets/photos/Indexing%20Input.png)
+
+### Loading
+![Indexing Process](assets/photos/Indexing%20Process.png)
+![Indexing Processing](assets/photos/Indexing%20Processing.png)
+
+### Status
+![Indexing Success](assets/photos/Indexing%20Success.png)
+
+## CSV to SQL
+### Main
+![CSV to SQL Main](assets/photos/CSV%20to%20SQL%20Main.png)
+
+### Input
+![CSV to SQL Input](assets/photos/CSV%20to%20SQL%20Input.png)
+
+### Result
+![CSV to SQL Combining](assets/photos/CSV%20to%20SQL%20Combining.png)
+![CSV to SQL Concatted CSV](assets/photos/CSV%20to%20SQL%20Concatted%20CSV.png)
+![CSV to SQL Stored](assets/photos/CSV%20to%20SQL%20Stored.png)
+![CSV to SQL Stored 2](assets/photos/CSV%20to%20SQL%20Stored%202.png)
+
+## Retrieval
+### Main
+![Retrieval Main](assets/photos/Retrieval%20Main.png)
+
+### Loading
+![Retrieval Loading](assets/photos/Retrieval%20Loading.png)
+
+### Result
+![Retrieval Result](assets/photos/Retrieval%20Result.png)
+
+
 # Video
 TBD
