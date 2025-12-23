@@ -79,11 +79,23 @@ class WeaviateRepository:
             for i, d in enumerate(self.doc):
                 uuid = generate_uuid5(d['document_id'] + '_' + str(i))
                 d["metadata"] = str(d["metadata"])
-                collections.data.insert(properties=d, uuid=uuid)
+                try:
+                    collections.data.insert(properties=d, uuid=uuid)
+                except Exception as insert_error:
+                    if "already exists" in str(insert_error):
+                        collections.data.replace(
+                            properties=d,
+                            uuid=uuid
+                        )
+                        console.log(f"Replaced existing document: {uuid}")
+                    else:
+                        raise insert_error
         except Exception as e:
             _, _, exc_tb = sys.exc_info()
             message = f"error {e} at {exc_tb.tb_lineno}, vector store upsert failed"
             print(message)
+        finally:
+            self.client.close()
  
     def upsert_docs(self):
         """

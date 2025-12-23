@@ -142,7 +142,10 @@ def indexing_ui(orchestrator):
         return new_collection_name if collection_dropdown == "+ Create New Collection" else collection_dropdown
     
     def refresh_collections():
-        return gr.update(choices=orchestrator.get_collections_from_db())
+        collections = orchestrator.get_collections_from_db()
+        print(f"refresh_collections: {collections}")
+        # Return dropdown update with new choices
+        return gr.Dropdown(choices=collections, value="+ Create New Collection")
 
     def toggle_new_table_input(selected):
         if selected == "+ Create New Collection":
@@ -189,6 +192,8 @@ def retrieval_ui(orchestrator):
                     label="Select Collection",
                     interactive=True
                 )
+                refresh_btn = gr.Button("🔄 Refresh", size="sm")
+                
                 file_selector = gr.Dropdown(
                     choices=[],
                     label="Select Document (leave empty to search all)",
@@ -202,6 +207,7 @@ def retrieval_ui(orchestrator):
                     lines=3
                 )
                 retrieve_btn = gr.Button("🔍 Retrieve", variant="primary", size="lg")
+            
             css = """
                 .markdown {
                     max-height: 400px;
@@ -214,18 +220,37 @@ def retrieval_ui(orchestrator):
                 with gr.Column():
                     retrieval_output = gr.Markdown(label="Retrieval Results")
 
+    def refresh_collection_dropdown():
+        collections = orchestrator.get_collections_from_db()
+        print(f"refresh_collection_dropdown: {collections}")
+        return gr.Dropdown(choices=collections)
+
     def update_file_choices(collection_name):
-        if collection_name:
+        print(f"DEBUG update_file_choices: collection_name={collection_name}")
+        if collection_name and collection_name != "+ Create New Collection":
             documents = orchestrator.get_documents_by_collection(collection_name)
+            print(f"DEBUG documents: {documents}")
+            
             doc_mapping = {}
             choices = []
+            
             for doc_id, filename in documents:
                 display_text = f"{filename} - {{{doc_id}}}"
                 choices.append(display_text)
                 doc_mapping[display_text] = doc_id
             
+            print(f"DEBUG choices: {choices}")
+            print(f"DEBUG doc_mapping: {doc_mapping}")
             return gr.Dropdown(choices=choices, value=None), doc_mapping
+        
         return gr.Dropdown(choices=[], value=None), {}
+    
+    # Refresh button to manually update collections
+    refresh_btn.click(
+        fn=refresh_collection_dropdown,
+        inputs=None,
+        outputs=[collection_selector]
+    )
     
     collection_selector.change(
         fn=update_file_choices,
@@ -235,9 +260,12 @@ def retrieval_ui(orchestrator):
 
     def retrieve_with_doc_id(query, collection_name, document_selector, doc_mapping):
         doc_id = None
+        print(f"DEBUG retrieve: document_selector={document_selector}, doc_mapping={doc_mapping}")
+        
         if document_selector and document_selector in doc_mapping:
             doc_id = doc_mapping[document_selector]
         
+        print(f"DEBUG: Retrieving query='{query}', collection='{collection_name}', doc_id='{doc_id}'")
         return orchestrator.retrieve_document(query, collection_name, doc_id)
 
     retrieve_btn.click(
@@ -245,4 +273,3 @@ def retrieval_ui(orchestrator):
         inputs=[query_input, collection_selector, file_selector, doc_id_state],
         outputs=[retrieval_output]
     )
-   
