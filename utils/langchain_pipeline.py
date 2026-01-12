@@ -20,14 +20,18 @@ def langchainInvoke(systemPrompt, userPrompt, inputVariable, schema):
     #         base_url="https://openrouter.ai/api/v1",
     #         model="google/gemma-3-27b-it:free"
     #     )
-    llm = langchainModel()
-    parser = PydanticOutputParser(pydantic_object=schema)
+    try:
+        llm = langchainModel()
+        parser = PydanticOutputParser(pydantic_object=schema)
 
-    template = ChatPromptTemplate.from_messages([
-        ("system", systemPrompt),
-        ("human", userPrompt)
-    ])
+        template = ChatPromptTemplate.from_messages([
+            ("system", systemPrompt),
+            ("human", userPrompt)
+        ])
 
-    pipeline = template | llm | parser
-    response = pipeline.invoke(inputVariable)
-    return response
+        pipeline = template | llm | parser
+        response = pipeline.invoke(inputVariable)
+        return response
+    except Exception as e:
+        print(f"There's an error while do Invoke Langchain with error: {str(e)}")
+        return False

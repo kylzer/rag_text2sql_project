@@ -44,7 +44,26 @@ class Weaviate:
                         data_type=wvc.config.DataType.TEXT
                     ),
                     wvc.config.Property(
-                        name="metadata",
+                        name="summary",
+                        data_type=wvc.config.DataType.TEXT
+                    ),
+                    wvc.config.Property(
+                        name="keywords",
+                        data_type=wvc.config.DataType.TEXT_ARRAY,
+                        skip_vectorization=True
+                    ),
+                    wvc.config.Property(
+                        name="entities",
+                        data_type=wvc.config.DataType.TEXT_ARRAY,
+                        skip_vectorization=True
+                    ),
+                    wvc.config.Property(
+                        name="questions",
+                        data_type=wvc.config.DataType.TEXT_ARRAY,
+                        skip_vectorization=True
+                    ),
+                    wvc.config.Property(
+                        name="filename",
                         data_type=wvc.config.DataType.TEXT,
                         skip_vectorization=True
                     ),
@@ -52,7 +71,7 @@ class Weaviate:
                         name="document_id",
                         data_type=wvc.config.DataType.TEXT,
                         skip_vectorization=True
-                    ),
+                    )
                     ]
                 )
             index = self.client.collections.get(self.collection_name)
@@ -78,7 +97,6 @@ class WeaviateRepository:
         try:
             for i, d in enumerate(self.doc):
                 uuid = generate_uuid5(d['document_id'] + '_' + str(i))
-                d["metadata"] = str(d["metadata"])
                 try:
                     collections.data.insert(properties=d, uuid=uuid)
                 except Exception as insert_error:

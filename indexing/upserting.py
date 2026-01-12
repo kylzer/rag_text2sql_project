@@ -16,19 +16,35 @@ class Upserter:
         self.n_chunk = n_chunk
 
     def _extract_keywords(self, combined_content):
-        keywords = langchainInvoke(KEYWORDS_SYSTEM_PROMPT, KEYWORDS_USER_PROMPT, {'text':combined_content}, Keywords).__dict__
-        return keywords
+        keywords = langchainInvoke(KEYWORDS_SYSTEM_PROMPT, KEYWORDS_USER_PROMPT, {'text':combined_content}, Keywords)
+        if keywords == False:
+            return {"keywords": [], "entities": [], "questions": []} 
+        return keywords.__dict__
 
     def _generate_summary(self, combined_content):
-        summary = langchainInvoke(SUMMARIZATION_SYSTEM_PROMPT, SUMMARIZATION_USER_PROMPT, {'text':combined_content}, Summary).summary
-        return summary
+        summary = langchainInvoke(SUMMARIZATION_SYSTEM_PROMPT, SUMMARIZATION_USER_PROMPT, {'text':combined_content}, Summary)
+        if summary == False:
+            return "Error generating summary"
+        print(summary)
+        return summary.summary
 
+    def _document_formatter(self, content, keywords_dict, summary):
+        keywords = keywords_dict['keywords']
+        entities = keywords_dict['entities']
+        questionHyp = keywords_dict['questions']
 
-    def _document_formatter(self, content, keywords, summary):
-        metadata = VectorMetadata(keywords=keywords, summary=summary, filename=self.fileName)
-        document = VectorInput(self.doc_id, content, metadata.__dict__).__dict__
-
-        return document
+        document = VectorInput(
+            document_id=self.doc_id,
+            page_content=content,
+            summary=summary,
+            keywords=keywords,
+            entities=entities,
+            questions=questionHyp,
+            filename=self.fileName
+        )
+        
+        # Convert to dict for Weaviate
+        return document.__dict__
 
     def _restructure(self):
         restructured_chunks = []
@@ -38,13 +54,17 @@ class Upserter:
             chunk_group = self.chunkedDocs[i:i + self.n_chunk]      
             combined_content = " ".join([chunk.text for chunk in chunk_group])
             
+            print("Get Keywords!")
             keywords = self._extract_keywords(combined_content)
+            print(keywords)
+            print("Get Summary!")
             summary = self._generate_summary(combined_content)
+            print(summary)
             
             for chunk in chunk_group:
                 formatted_doc = self._document_formatter(
                     content=chunk.text,
-                    keywords=keywords,
+                    keywords_dict=keywords,
                     summary=summary 
                 )
                 restructured_chunks.append(formatted_doc)

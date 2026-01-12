@@ -101,14 +101,23 @@ def fraud_knowledge(question: str = None, collection_name: str = None, document_
             console.log(f'Successfully connected to collection: {collection_name}')
             collection = client.collections.get(collection_name)
             try:
-                response = collection.query.hybrid(
-                    query=question,
-                    filters=classes.query.Filter.by_property("document_id").contains_any([document_id]),
-                    return_metadata=MetadataQuery(distance=True, score=True, explain_score=True),
-                    limit=5
-                )
+                weaviate_param = {
+                    "query": question,
+                    "return_metadata": MetadataQuery(distance=True, score=True, explain_score=True),
+                    "limit": 5
+                }
+
+                if document_id is not None:
+                    weaviate_param["filters"] = classes.query.Filter.by_property("document_id").contains_any([document_id]) 
+                    response = collection.query.hybrid(**weaviate_param)
+                else:
+                    response = collection.query.near_text(**weaviate_param)           
+
                 if hasattr(response, 'objects') and response.objects:
-                    console.log(f'Found existing objects with document_id: {document_id}')
+                    if document_id:
+                        console.log(f'Found {len(response.objects)} objects with document_id: {document_id}')
+                    else:
+                        console.log(f'Found {len(response.objects)} objects across all documents')
                     for result in response.objects:
                         chunk_list.append(result.properties.get("page_content", ""))
                     console.log(f"Chunk List :\n{chunk_list}")

@@ -59,7 +59,8 @@ class TabularOrchestrator:
                 
                 if not success:
                     return self.response(f"{message}", selected_table)
-            
+            schema_status = "Generate Schema Success" if self.extract_schema() else "Error while generating schema"
+            print("Schema Status : ", schema_status)
             summary, preview = self.sql_handler.get_table_preview(table_name, preview_limit)
             return self.response(message, selected_table, summary, preview)
                         
@@ -72,37 +73,43 @@ class TabularOrchestrator:
         return summary, preview
     
     def extract_schema(self):
-        conn = self.sql_handler.get_connection()
-        database_name = self.db_name
-        cursor = conn.cursor()
+        try:
+            conn = self.sql_handler.get_connection()
+            database_name = self.db_name
+            cursor = conn.cursor()
 
-        cursor.execute("""
-            SELECT name
-            FROM sqlite_master
-            WHERE type='table'
-            AND name NOT LIKE 'sqlite_%';
-        """)
-        tables = [row[0] for row in cursor.fetchall()]
+            cursor.execute("""
+                SELECT name
+                FROM sqlite_master
+                WHERE type='table'
+                AND name NOT LIKE 'sqlite_%';
+            """)
+            tables = [row[0] for row in cursor.fetchall()]
 
-        table_list = {}
-        for table in tables:
-            cursor.execute(f"PRAGMA table_info({table});")
-            columns = [row[1] for row in cursor.fetchall()]
-            table_list[table] = {col: "Description Placeholder" for col in columns}
-        
-        conn.close()
-        
-        schema = {
-            "database_name": database_name,
-            "table_list": table_list
-        }
+            table_list = {}
+            for table in tables:
+                cursor.execute(f"PRAGMA table_info({table});")
+                columns = [row[1] for row in cursor.fetchall()]
+                table_list[table] = {col: "Description Placeholder" for col in columns}
+            
+            conn.close()
+            
+            schema = {
+                "database_name": database_name,
+                "table_list": table_list
+            }
+            print(f"Initial Schema :\n{schema}")
 
-        restructured_status = self.generate_description(schema)
-        
-        return restructured_status
+            restructured_status = self.generate_description(schema)
+            
+            return restructured_status
+        except Exception as e:
+            print(f"Error while generate description for Schema with error: {str(e)}")
+            return False
     
     def generate_description(self, schema):
         try:
+            print("Generating Schema Description!")
             db_name = schema['database_name']
             table_list = schema['table_list']
 
@@ -134,7 +141,7 @@ class TabularOrchestrator:
                 </table>
             """
 
-            restructured_schema = langchainInvoke(DESCRIPTION_SYSTEM_PROMPT, DESCRIPTION_USER_PROMPT, {'db_name':db_name, 'table_list':table_list}, DatabaseSchema)
+            restructured_schema = langchainInvoke(DESCRIPTION_SYSTEM_PROMPT, DESCRIPTION_USER_PROMPT, {'db_name':db_name, 'table_list':table_list}, DatabaseSchema).model_dump()
             with open(f"{self.db_folder}/db_schema.json", "w", encoding="utf-8") as f:
                 json.dump(restructured_schema, f, indent=2)
             return True

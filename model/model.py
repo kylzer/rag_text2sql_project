@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import pandas as pd
 
@@ -21,14 +21,19 @@ class VectorInput:
     """
     document_id: str
     page_content: str
-    metadata: Dict
+    summary: str
+    keywords: List[str]
+    entities: List[str]
+    questions: List[str]
+    filename: str
 
-@dataclass
-class VectorMetadata:
+class VectorMetadata(BaseModel):
     """
     Metadata for Vectorized Store
     """
-    keywords: list
+    keywords: list[str]
+    entities: list[str]
+    questions: list[str]
     summary: str
     filename: str
 

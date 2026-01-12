@@ -12,7 +12,7 @@ run: ## Start everything
 		$(PIP) install -r requirements.txt; \
 	fi
 	@echo "Starting Docker services..."
-	@docker-compose up -d
+	@docker-compose up -d --build
 	@echo "Starting Gradio..."
 	@$(PYTHON) main.py
 
@@ -25,4 +25,5 @@ clean: ## Clean everything
 	@rm -rf $(VENV)
 	@rm -rf database/vectorRepo.db
 	@rm -rf database/data.db
+	@rm -rf database/db_schema.json
 	@echo "Cleaned"
