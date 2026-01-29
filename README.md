@@ -1,8 +1,9 @@
 
-# Mekari Assignment Test
+# RAG and Text2SQL Project (Fraud Detection)
 
-This is a challenge test from Mekari.  
-An Fraud Knowledge Agent
+An end-to-end Fraud Knowledge Agent built using Retrieval-Augmented Generation (RAG),
+vector search, and Text-to-SQL to answer questions over both unstructured documents
+and structured databases.
 
 # Requirements
 - Docker
@@ -25,6 +26,8 @@ That's the reason I don't use GPU on Docker Compose for Ollama.
 **NOTES** : I don't provide Ollama in Docker Compose in purpose (can't do Embedding and LLM at the same device)
 # Tool List
 - fraud_knowledge
+- database_information
+- fraud_database
 
 
 # Library & Frameworks
@@ -58,13 +61,13 @@ torch>=2.2.0
 Clone the project
 
 ```bash
-  git clone https://github.com/kylzer/mekari_test.git
+  git clone https://github.com/kylzer/rag_text2sql_project.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd mekari_test
+  cd rag_text2sql_project
 ```
 
 Run with Makefile
@@ -79,7 +82,7 @@ Embedding Service Logs
 ```
 Weaviate Logs
 ```
-  docker logs -f mekari_test-weaviate-1 
+  docker logs -f rag_text2sql_project-weaviate-1 
 ```
 
 # Usage

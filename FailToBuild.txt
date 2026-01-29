@@ -1,3 +1,2 @@
 # Fail
-- Create a feature to generate SQL query for Database Knowledge
 - Make it more stable and robust

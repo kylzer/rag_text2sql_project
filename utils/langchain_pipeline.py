@@ -6,20 +6,21 @@ from langchain_core.prompts import ChatPromptTemplate
 import os
 
 def langchainModel():
+    # llm = ChatOpenAI(
+    #     api_key=os.getenv("OLLAMA_API_KEY"),
+    #     base_url=os.getenv("GENERATIVE_HOST"),
+    #     model=os.getenv("GENERATIVE_MODEL")
+    # )
+
     llm = ChatOpenAI(
-        api_key=os.getenv("OLLAMA_API_KEY"),
-        base_url=os.getenv("GENERATIVE_HOST"),
-        model=os.getenv("GENERATIVE_MODEL")
-    )
+            api_key=os.getenv("OPENROUTER_API_KEY"),
+            base_url="https://openrouter.ai/api/v1",
+            model="openai/gpt-oss-20b:free"
+        )
     return llm
 
 def langchainInvoke(systemPrompt, userPrompt, inputVariable, schema):
-    # llm = ChatGoogleGenerativeAI(model="gemini-3-flash-preview")
-    # llm = ChatOpenAI(
-    #         api_key=os.getenv("OPENROUTER_API_KEY"),
-    #         base_url="https://openrouter.ai/api/v1",
-    #         model="google/gemma-3-27b-it:free"
-    #     )
+
     try:
         llm = langchainModel()
         parser = PydanticOutputParser(pydantic_object=schema)

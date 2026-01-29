@@ -8,7 +8,7 @@ services:
     - --scheme
     - http
     image: cr.weaviate.io/semitechnologies/weaviate:1.35.0
-    container_name: weaviate_mekari
+    container_name: weaviate_test
     ports:
     - 8080:8080
     - 50051:50051
